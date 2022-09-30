@@ -80,7 +80,7 @@
     remote_src: "{{ dashboard_tls_external | bool }}"
   when:
     - grafana_crt | length > 0
-    - dashboard_protocol == "https"
+    - grafana_server_protocol == "https"
 
 - name: copy grafana SSL certificate key
   copy:
@@ -92,7 +92,7 @@
     remote_src: "{{ dashboard_tls_external | bool }}"
   when:
     - grafana_key | length > 0
-    - dashboard_protocol == "https"
+    - grafana_server_protocol == "https"
 
 - name: generate a Self Signed OpenSSL certificate for dashboard
   shell: |
@@ -100,7 +100,7 @@
     (openssl req -new -nodes -x509 -subj '/O=IT/CN=ceph-grafana' -days 3650 -keyout /etc/grafana/ceph-dashboard.key -out /etc/grafana/ceph-dashboard.crt -extensions v3_ca && \
     chown {{ grafana_uid }}:{{ grafana_uid }} /etc/grafana/ceph-dashboard.key /etc/grafana/ceph-dashboard.crt)
   when:
-    - dashboard_protocol == "https"
+    - grafana_server_protocol == "https"
     - grafana_key | length == 0 or grafana_crt | length == 0
 
 - name: enable and start grafana
